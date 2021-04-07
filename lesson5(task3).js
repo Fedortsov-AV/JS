@@ -4,16 +4,23 @@
 3.1. Пустая корзина должна выводить строку «Корзина пуста»;
 3.2. Наполненная должна выводить «В корзине: n товаров на сумму m рублей».
  */
-const divBasket = document.createElement('div');
-const p = document.createElement('p');
-divBasket.appendChild(p);
-document.body.appendChild(divBasket);
-p.align = 'right';
-
-
 
 let basket = {
   product: [],
+
+  init(){
+    this.renderBasket()
+  },
+
+  renderBasket(){
+    const divBasket = document.createElement('div');
+    const p = document.createElement('p');
+    p.className = 'basket';
+    divBasket.appendChild(p);
+    document.body.appendChild(divBasket);
+    p.align = 'right';
+  },
+
 
   countBasketPrice() {
     let countPrice = 0;
@@ -26,25 +33,26 @@ let basket = {
 
   delAll() {
     this.product.splice(0, this.product.length);
-    if (basket.product.length > 0) {
-      p.textContent = `В корзине: ` + basket.product.length + ` товаров на сумму ` + basket.countBasketPrice() + ` рублей`;
-    } else {
-      p.textContent = `Корзина пуста`;
-    }
+    this.updateRenderBasket();
 
   },
 
   delPosition(key) {
     this.product.splice(key, 1);
-    if (basket.product.length > 0) {
-      p.textContent = `В корзине: ` + basket.product.length + ` товаров на сумму ` + basket.countBasketPrice() + ` рублей`;
-    } else {
-      p.textContent = `Корзина пуста`;
-    }
+    this.updateRenderBasket();
   },
 
   findProductID(id){
     return this.product.findIndex((productId) => productId.id_product === id )
+  },
+
+  updateRenderBasket(){
+   if (basket.product.length > 0) {
+     const textBasket = document.querySelector('.basket')
+     textBasket.textContent = `В корзине: ` + this.product.length + ` товаров на сумму ` + this.countBasketPrice() + ` рублей`;
+    } else {
+      textBasket.textContent = `Корзина пуста`;
+    }
   }
 
 
@@ -58,26 +66,6 @@ let product = {
   description: '',
   category: '',
 
-  addProduct(id_product, name, price, availability, description, category) {
-    this.id_product = id_product;
-    this.name = name;
-    this.price = price;
-    this.availability = availability;
-    this.description = description;
-    this.category = category;
-  },
-
-  // addProductInArr(id_product, name, price, availability, description, category) {
-  //   productArray.push({
-  //     id_product: this.id_product,
-  //     name:  this.name,
-  //     price: this.price,
-  //     availability: this.availability,
-  //     description: this.description,
-  //     category: this.category
-  //   })
-  // },
-
   addInBasket(quantity) {
     let i = 0;
     if (this.availability < quantity) {
@@ -90,11 +78,7 @@ let product = {
       basket.product[basket.findProductID(this.id_product)].quantity += quantity;
     };
 
-    if (basket.product.length > 0) {
-      p.textContent = `В корзине: ` + basket.product.length + ` товаров на сумму ` + basket.countBasketPrice() + ` рублей`;
-    } else {
-      p.textContent = `Корзина пуста`;
-    }
+    basket.updateRenderBasket();
   },
 
   changeCategory(cat) {
@@ -117,7 +101,7 @@ let product = {
     this.description = description;
   }
 }
-
+basket.init();
 
 
 
@@ -129,9 +113,3 @@ let test3 = Object.assign({}, product);
 test3.addProduct(3, 'Tomatoes', 50, 150, '', 'Овощи');
 
 test1.addInBasket(50);
-
-
-
-
-
-
